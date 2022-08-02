@@ -58,14 +58,17 @@ class S3_operations:
         
     def get_file(self,processed_bname, folder_name, output_bname, filerange):
         
-        fname = folder_name + f'file{filerange}.json'
-        response = self.s3c.get_object(Bucket=processed_bname, Key=fname)
-        data = response['Body'].read()
-        json_data = json.loads(data)
-        target_file_name = folder_name + json_data['fname']+'.'+json_data['ftype']
-        target_object = self.s3c.get_object(Bucket=output_bname, Key=target_file_name)
-        size = int(target_object.get('ResponseMetadata').get('HTTPHeaders').get('content-length'))
-        print(target_file_name, size)
+        try:
+            fname = folder_name + f'file{filerange}.json'
+            response = self.s3c.get_object(Bucket=processed_bname, Key=fname)
+            data = response['Body'].read()
+            json_data = json.loads(data)
+            target_file_name = folder_name + json_data['fname']+'.'+json_data['ftype']
+            target_object = self.s3c.get_object(Bucket=output_bname, Key=target_file_name)
+            size = int(target_object.get('ResponseMetadata').get('HTTPHeaders').get('content-length'))
+            print(target_file_name, size)
+        except:
+            print(f'{filerange} File not found')
 
     def get_processed_file_info(self,processed_bname, folder_name, output_bname, filerange):
         if type(filerange) == list:
@@ -112,8 +115,9 @@ class S3_operations:
 
     def gzip_extract(self,bucket, gzipped_key, uncompressed_key):
         """
-         ****LAMBDA SPECIFIC****
-         Extracts gzip files upto 2GB via lambda and stores in the specified location.
+         ****LAMBDA & EC2 SPECIFIC****
+         Extracts gzip files upto 1.5 GB via lambda and stores the unzipped file in the specified s3 location.
+         Extracts gzip files greater than 1.5 GB via AWS workspace. EC2 (we will have to experiment)
 
         """
         now  = datetime.now()
@@ -143,3 +147,6 @@ class S3_operations:
 
 
 # file_names = o.get_processed_file_numbers('humana/')
+
+
+# o.get_processed_file_info('revmaxai-bulk-download-processed', 'humana/', 'revmaxai-bulk-download-output', [-10,50])
