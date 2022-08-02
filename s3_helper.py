@@ -38,6 +38,24 @@ class S3_operations:
         print('......... \n')
         print(f'Total files in {self.bucket_name} in folder {folder_name} -{file_count}')
         
+        
+    def get_processed_file_numbers(self, folder_name):
+
+        file_count = 0
+        file_numbers = []
+        self.files_in_bucket = list(self.bucket.objects.all())
+        for i in tqdm(self.files_in_bucket):
+            if folder_name in i.key:
+                try:
+                    f_no = i.key.split('/')[1]
+                    file_numbers.append(f_no)
+                    file_count+=1
+                except:
+                    print(i.key.split('/')[1].replace('file','').replace('.json',''))
+        print('......... \n')
+        print(f'Total files in {self.bucket_name} in folder {folder_name} -{file_count}')
+        return file_numbers
+        
     def get_file(self,processed_bname, folder_name, output_bname, filerange):
         
         fname = folder_name + f'file{filerange}.json'
@@ -112,3 +130,16 @@ class S3_operations:
         print(now) 
 
 
+
+
+# Execution example
+# o = S3_operations('us-east-2', 'AKIA5GWC4RWCD6OAL5PW', 'IL9UykncKScuGTj9cq4J1EywN6UPJY6Q7ViDJoOB', 'revmaxai-bulk-download-processed')
+
+# o.get_total_files()
+
+
+# o.get_files_in_folder('humana/')
+
+
+
+# file_names = o.get_processed_file_numbers('humana/')
