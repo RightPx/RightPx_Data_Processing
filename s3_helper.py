@@ -137,7 +137,7 @@ class S3_operations:
 
 
 # Execution example
-# o = S3_operations('us-east-2', 'AKIA5GWC4RWCD6OAL5PW', 'IL9UykncKScuGTj9cq4J1EywN6UPJY6Q7ViDJoOB', 'revmaxai-bulk-download-processed')
+# o = S3_operations('us-east-2', 'your-access-key', 'your-secret-access-key', 'revmaxai-bulk-download-processed')
 
 # o.get_total_files()
 
