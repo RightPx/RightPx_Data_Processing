@@ -1,3 +1,5 @@
+
+
 import boto3 
 from tqdm import tqdm
 import json
@@ -55,6 +57,17 @@ class S3_operations:
         print('......... \n')
         print(f'Total files in {self.bucket_name} in folder {folder_name} -{file_count}')
         return file_numbers
+    
+    def get_processed_file_names(self, folder_name):
+
+        file_names = []
+        self.files_in_bucket = list(self.bucket.objects.all())
+        for i in tqdm(self.files_in_bucket):
+            if folder_name in i.key:
+               file_names.append(i.key)
+        print('......... \n')
+        print(f'Total files in {self.bucket_name} in folder {folder_name} -{len(file_names)}')
+        return file_names
         
     def get_file(self,processed_bname, folder_name, output_bname, filerange):
         
@@ -118,7 +131,6 @@ class S3_operations:
          ****LAMBDA & EC2 SPECIFIC****
          Extracts gzip files upto 1.5 GB via lambda and stores the unzipped file in the specified s3 location.
          Extracts gzip files greater than 1.5 GB via AWS workspace. EC2 (we will have to experiment)
-
         """
         now  = datetime.now()
         print(now)
