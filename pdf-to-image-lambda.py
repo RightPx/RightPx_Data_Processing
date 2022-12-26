@@ -90,18 +90,21 @@ def pdf_to_image(bucketname, filename):
         total_pages = int(short_filename.split('part_')[1].split('_')[1].replace('.pdf',''))
     else:
         part_no = 0
-        
+        total_pages = ''
     for page_num, image in enumerate(images,part_no):
         
         if '_part' in short_filename:
             directory = short_filename.split('_part')[0]
             npages = int(short_filename.split('_')[-1].replace('.pdf','').replace('.tif',''))
             total_pages = directory.split('page')[-1].split('.')[0]
-            location = OUTPUT_S3_IMAGE_PREFIX  + "/" + directory + "/" + directory + "_page_" + str(page_num) +'_of_'+ str(total_pages) + '.' + FMT
+            location = OUTPUT_S3_IMAGE_PREFIX  + "/" + directory + "/" + directory + "_page_" + str(page_num+1) +'_of_'+ str(total_pages) + '.' + FMT
         else:
-            directory = short_filename.replace('.pdf','').replace('.tif','')
-            npages = page_num
-            location = OUTPUT_S3_IMAGE_PREFIX  + "/" + directory + "/" + directory + "_page_" + str(page_num) +'_of_'+ str(total_pages) + '.' + FMT
+            directory = short_filename.replace('.pdf','').replace('.tif','').split('zigna_revmaxai_page')[0]
+            npages = page_num + 1
+            new_dir = directory.split('zigna_revmaxai_page')[-1]
+            total_pages = short_filename.split('zigna_revmaxai_page')[-1].split('.')[0]
+            print(directory, npages,new_dir,total_pages)
+            location = OUTPUT_S3_IMAGE_PREFIX  + "/" + new_dir + "/" + new_dir + "_page_" + str(page_num+1) +'_of_'+ str(total_pages) + '.' + FMT
 
         print(f"Saving page number {str(page_num)} to S3 at location: {OUTPUT_BUCKET_NAME}, {location}.")
 
@@ -139,6 +142,7 @@ def pdf_to_image(bucketname, filename):
             print('processing done..........')
             print(len(timages), npages)
         else:
+            print(filename)
             copy_source = {'Bucket': OUTPUT_BUCKET_NAME,'Key': filename.replace('split','input')}
             s3r.meta.client.copy(copy_source, OUTPUT_BUCKET_NAME, filename.replace('split','processed'))
             delete_object(OUTPUT_BUCKET_NAME,filename.replace('split','input'))
