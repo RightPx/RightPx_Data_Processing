@@ -16,7 +16,7 @@ from pikepdf import Pdf
 
 class ChunkPdf():
     
-    def __init__(self, input_bucket, input_folder, access_key = 'AKIA5GWC4RWCLLVC5TCO',secret_key='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'):
+    def __init__(self, input_bucket, input_folder, access_key = 'access key',secret_key='secret key'):
         
         session = boto3.Session(aws_access_key_id=access_key,aws_secret_access_key=secret_key)
         self.s3r = session.resource('s3')
