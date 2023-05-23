@@ -1,5 +1,6 @@
-Payers Details
+RightPx - Price Transperancy tool.
 ==============
+This Repository contains the code for the backend processing of data.
 
 Excellus BlueCross BlueShield 
 -----------------------------
